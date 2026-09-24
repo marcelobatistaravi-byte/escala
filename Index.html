@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escala de Trabalho</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --panel:#141414;
+    --panel2:#1c1c1c;
+    --line:#ffffff;
+    --gray:#4a4a4a;
+    --graytext:#8a8a8a;
+    --accent:#39ff8f;
+    --warn:#ffb020;
+    --escferias:#707070;
+    --text:#f2f2f2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI', Arial, sans-serif;
+    min-height:100vh;
+  }
+  h1,h2,h3{font-family:'Trebuchet MS', 'Segoe UI', sans-serif; letter-spacing:.5px;}
+
+  /* ---------- LOGIN ---------- */
+  #login-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    padding:24px;
+  }
+  .login-box{
+    background:var(--panel);
+    border:1px solid #2b2b2b;
+    border-radius:14px;
+    padding:32px 36px;
+    width:100%;
+    max-width:380px;
+    box-shadow:0 0 40px rgba(57,255,143,0.05);
+  }
+  .login-box h1{
+    font-size:22px;
+    margin:0 0 4px;
+    color:var(--accent);
+  }
+  .login-box p.sub{
+    color:var(--graytext);
+    margin:0 0 22px;
+    font-size:13px;
+  }
+  .user-pick{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:18px;
+    max-height:260px;
+    overflow-y:auto;
+  }
+  .user-opt{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #2b2b2b;
+    cursor:pointer;
+    background:var(--panel2);
+    transition:.15s;
+  }
+  .user-opt:hover{border-color:var(--accent);}
+  .user-opt.selected{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset;}
+  .swatch{
+    width:26px; height:26px; border-radius:6px; border:2px solid var(--line); flex-shrink:0;
+  }
+  .login-box label{
+    display:block; font-size:12px; color:var(--graytext); margin-bottom:5px; margin-top:12px;
+  }
+  .login-box input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid #333;
+    background:#0d0d0d;
+    color:var(--text);
+    font-size:14px;
+  }
+  .login-box input:focus{outline:none; border-color:var(--accent);}
+  #login-btn{
+    margin-top:20px;
+    width:100%;
+    padding:11px;
+    border-radius:8px;
+    border:none;
+    background:var(--accent);
+    color:#062012;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    letter-spacing:.5px;
+  }
+  #login-btn:hover{filter:brightness(1.08);}
+  #login-error{
+    color:#ff5b5b; font-size:12.5px; margin-top:10px; min-height:14px;
+  }
+  .hint{
+    color:#5f5f5f; font-size:11px; margin-top:14px; text-align:center;
+  }
+
+  /* ---------- APP ---------- */
+  #app-screen{display:none; padding:18px 22px 60px;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:14px;
+    margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid #262626;
+  }
+  .topbar h1{font-size:20px; margin:0; color:var(--accent);}
+  .topbar .who{font-size:13px; color:var(--graytext); margin-top:2px;}
+  .who .me-swatch{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:6px; border:1px solid #fff;}
+  .top-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .btn{
+    background:var(--panel2); color:var(--text); border:1px solid #333;
+    padding:9px 14px; border-radius:8px; font-size:12.5px; cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent);}
+  .btn.danger:hover{border-color:#ff5b5b; color:#ff8787;}
+  .btn.admin{border-color:var(--warn); color:var(--warn);}
+  .btn.admin:hover{background:rgba(255,176,32,0.1);}
+  #file-import{display:none;}
+
+  .legend{
+    display:flex; gap:14px; flex-wrap:wrap; margin-bottom:20px;
+    background:var(--panel); border:1px solid #262626; border-radius:10px; padding:12px 16px;
+  }
+  .legend-item{display:flex; align-items:center; gap:8px; font-size:13px;}
+  .legend-sw{width:18px; height:18px; border-radius:4px; border:1.5px solid var(--line);}
+
+  /* ---------- CÓDIGO DE DESTRAVAMENTO ---------- */
+  .unlock-card{
+    background:var(--panel); border:1px solid #262626; border-radius:10px;
+    padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .unlock-card b{font-size:13px;}
+  .unlock-card input{
+    padding:8px 10px; border-radius:7px; border:1px solid #333; background:#0d0d0d;
+    color:var(--text); font-size:13px; letter-spacing:2px; text-transform:uppercase; width:140px;
+  }
+  .unlock-card .hint2{color:#666; font-size:11px; width:100%;}
+
+  .summary{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:10px; margin-bottom:24px;
+  }
+  .sum-card{
+    background:var(--panel); border:1px solid #262626; border-radius:10px; padding:12px 14px;
+  }
+  .sum-card .name{font-size:12.5px; color:var(--graytext); display:flex; align-items:center; gap:7px; justify-content:space-between;}
+  .sum-card .hrs{font-size:22px; font-weight:700; margin-top:4px;}
+  .sum-card .quota{font-size:11px; color:var(--graytext); margin-top:6px;}
+  .sum-card .quota .prog{font-weight:700;}
+  .sum-card .quota.done .prog{color:var(--accent);}
+  .sum-card .quota.pending .prog{color:#ffb020;}
+  .sum-card .range{font-size:10.5px; color:#666; margin-top:2px;}
+  .sum-card .genbtn{
+    border:1px solid #333; background:#0d0d0d; color:#9a9a9a; font-size:10px;
+    border-radius:6px; padding:3px 6px; cursor:pointer;
+  }
+  .sum-card .genbtn:hover{border-color:var(--accent); color:var(--accent);}
+  .qbar{height:5px; border-radius:3px; background:#2a2a2a; margin-top:6px; overflow:hidden;}
+  .qbar-fill{height:100%; background:var(--accent);}
+  .qbar-fill.over{background:#ffb020;}
+
+  .week-block{
+    margin-bottom:26px;
+  }
+  .week-title{
+    font-size:12.5px; color:var(--graytext); margin-bottom:8px; letter-spacing:.5px; text-transform:uppercase;
+  }
+  table.week-table{
+    border-collapse:collapse;
+    width:100%;
+    table-layout:fixed;
+  }
+  table.week-table th, table.week-table td{
+    border:2px solid #fff;
+    text-align:center;
+    padding:0;
+    height:46px;
+  }
+  table.week-table th{
+    background:#000;
+    color:#fff;
+    font-size:13px;
+    height:38px;
+    font-weight:700;
+  }
+  table.week-table th .dow{display:block; font-size:14px;}
+  table.week-table th .dnum{display:block; font-size:10.5px; color:#9a9a9a; font-weight:400; margin-top:1px;}
+  td.cell{
+    cursor:pointer;
+    background:var(--gray);
+    position:relative;
+    color:#111;
+    font-weight:700;
+    font-size:11.5px;
+    user-select:none;
+  }
+  td.cell.pad{
+    cursor:default;
+    background:#161616;
+    border-color:#2a2a2a;
+  }
+  td.cell.filled:hover::after{
+    content:'✕ remover';
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.55); color:#fff; font-size:10px;
+  }
+  td.cell.admin-mode:hover::after{
+    content:'⚙ administrar';
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.55); color:#fff; font-size:10px;
+  }
+  td.cell.empty:hover{filter:brightness(1.35);}
+  td.cell.ferias{
+    background:var(--escferias);
+    color:#e8e8e8;
+    cursor:not-allowed;
+    background-image:repeating-linear-gradient(45deg, rgba(0,0,0,0.25) 0 6px, transparent 6px 12px);
+  }
+  td.cell.ferias:hover::after{
+    content:'reservado';
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.55); color:#fff; font-size:10px;
+  }
+  td.cell.locked{box-shadow:inset 0 0 0 3px var(--warn);}
+  td.turno-label{
+    background:#000; color:#bbb; font-size:10px; padding:0 4px; border:2px solid #fff; width:54px;
+  }
+
+  /* ---------- MODAL ---------- */
+  #modal-bg, #admin-modal-bg, #code-modal-bg, #pwd-modal-bg, #unlock-modal-bg{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65);
+    align-items:center; justify-content:center; z-index:50; padding:16px;
+  }
+  #modal-box, #admin-modal-box, #code-modal-box, #pwd-modal-box, #unlock-modal-box{
+    background:var(--panel); border:1px solid #333; border-radius:12px;
+    padding:24px 26px; width:320px; text-align:center; max-height:90vh; overflow-y:auto;
+  }
+  #modal-box h3, #admin-modal-box h3, #code-modal-box h3, #pwd-modal-box h3, #unlock-modal-box h3{margin:0 0 6px; font-size:15px;}
+  #modal-box p, #admin-modal-box p, #pwd-modal-box p, #unlock-modal-box p{color:var(--graytext); font-size:12.5px; margin:0 0 18px;}
+  #modal-box .modal-btns, #admin-modal-box .modal-btns, #pwd-modal-box .modal-btns{display:flex; gap:10px;}
+  #modal-box button, #admin-modal-box button, #code-modal-box button, #pwd-modal-box button, #unlock-modal-box button{
+    flex:1; padding:10px 8px; border-radius:8px; border:1px solid #333;
+    background:#0d0d0d; color:#fff; cursor:pointer; font-size:13px;
+  }
+  #modal-box button.primary, #admin-modal-box button.primary, #code-modal-box button.primary, #pwd-modal-box button.primary, #unlock-modal-box button.primary{background:var(--accent); color:#062012; border:none; font-weight:700;}
+  #modal-box button:hover, #admin-modal-box button:hover, #code-modal-box button:hover, #pwd-modal-box button:hover, #unlock-modal-box button:hover{filter:brightness(1.1);}
+  #modal-cancel, #admin-modal-cancel, #pwd-cancel{margin-top:10px; background:none; border:none; color:#666; font-size:11.5px; cursor:pointer;}
+  .admin-field{text-align:left; margin-bottom:12px;}
+  .admin-field label{display:block; font-size:11.5px; color:var(--graytext); margin-bottom:4px;}
+  .admin-field select, .admin-field input[type=text], .admin-field input[type=password]{
+    width:100%; padding:8px 10px; border-radius:7px; border:1px solid #333;
+    background:#0d0d0d; color:#fff; font-size:13px;
+  }
+  #unlock-modal-box{width:400px;}
+  .unlock-row{
+    background:#0d0d0d; border:1px solid #333; border-radius:8px; padding:10px; margin-bottom:8px; text-align:left;
+  }
+  .unlock-row .info{font-size:12px; margin-bottom:8px;}
+  .unlock-row .row-btns{display:flex; gap:8px;}
+  .unlock-row .row-btns button{flex:1; padding:8px 6px; font-size:12px;}
+  .unlock-row .resolved{color:#666; font-size:12px;}
+  .admin-check{display:flex; align-items:center; gap:8px; font-size:12.5px; margin-bottom:14px; justify-content:flex-start;}
+  .code-display{
+    font-size:30px; letter-spacing:8px; font-weight:800; color:var(--accent);
+    background:#0d0d0d; border:1px dashed var(--accent); border-radius:10px; padding:16px 10px; margin:14px 0;
+  }
+
+  #toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    background:#1c1c1c; border:1px solid #333; color:#fff; padding:11px 18px;
+    border-radius:9px; font-size:13px; display:none; z-index:60; max-width:90%; text-align:center;
+  }
+  #toast.error{border-color:#ff5b5b; color:#ff9d9d;}
+  #toast.ok{border-color:var(--accent); color:var(--accent);}
+
+  footer.note{color:#4a4a4a; font-size:11px; text-align:center; margin-top:30px;}
+
+  /* ---------- ADMIN PANEL ---------- */
+  #admin-panel{
+    display:none; background:var(--panel); border:1px solid var(--warn); border-radius:12px;
+    padding:18px 20px; margin-bottom:26px;
+  }
+  #admin-panel h2{font-size:16px; color:var(--warn); margin:0 0 4px;}
+  #admin-panel > p.sub{color:var(--graytext); font-size:12px; margin:0 0 16px;}
+  .admin-section{border-top:1px dashed #2b2b2b; padding-top:14px; margin-top:14px;}
+  .admin-section h3{font-size:13.5px; margin:0 0 10px; color:var(--text);}
+  .admin-row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;}
+  .admin-row .fld{display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--graytext);}
+  .admin-row .fld input, .admin-row .fld select{
+    padding:7px 9px; border-radius:7px; border:1px solid #333; background:#0d0d0d; color:#fff; font-size:12.5px;
+  }
+  .admin-row .fld input[type=color]{padding:2px; width:46px; height:32px;}
+  .admin-row .fld input[type=number]{width:80px;}
+  .server-card{
+    background:var(--panel2); border:1px solid #2b2b2b; border-radius:10px; padding:14px; margin-bottom:12px;
+  }
+  .server-card .server-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .server-card .server-head .swatch{width:22px; height:22px;}
+  .weekend-chk{display:flex; gap:10px; flex-wrap:wrap; font-size:11.5px; color:var(--graytext); align-items:center;}
+  .weekend-chk label{display:flex; align-items:center; gap:4px;}
+  .blocked-list{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .blocked-chip{
+    background:#0d0d0d; border:1px solid #444; border-radius:14px; padding:4px 8px 4px 10px;
+    font-size:11px; display:flex; align-items:center; gap:6px;
+  }
+  .blocked-chip button{background:none; border:none; color:#ff8787; cursor:pointer; font-size:12px; padding:0;}
+  .locked-list-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#0d0d0d; border:1px solid #333; border-radius:8px; padding:8px 10px; margin-bottom:6px; font-size:12px;
+  }
+  .locked-list-item button{
+    background:none; border:1px solid #444; color:var(--warn); border-radius:6px; padding:3px 8px; cursor:pointer; font-size:11px;
+  }
+  .admin-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+
+  @media (max-width:640px){
+    table.week-table th .dow{font-size:11px;}
+    table.week-table th .dnum{font-size:9px;}
+    td.cell{font-size:9px; height:38px;}
+    table.week-table th{height:32px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Escala de Trabalho</h1>
+    <p class="sub" id="login-sub">acesso ao sistema</p>
+
+    <div class="user-pick" id="user-pick"></div>
+
+    <label for="pw">Senha</label>
+    <input type="password" id="pw" placeholder="Digite a senha" autocomplete="off">
+    <button id="login-btn">Entrar</button>
+    <div id="login-error"></div>
+    <div class="hint">Senha padrão = seu nome (ex.: usuário "Marcelo", senha "Marcelo"), a menos que você já a tenha alterado em "🔑 Alterar senha".</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app-screen">
+  <div class="topbar">
+    <div>
+      <h1 id="app-title">Escala</h1>
+      <div class="who" id="who-line"></div>
+    </div>
+    <div class="top-actions">
+      <button class="btn admin" id="admin-toggle-btn" style="display:none;">⚙ Painel do administrador</button>
+      <button class="btn" id="change-pwd-btn">🔑 Alterar senha</button>
+      <button class="btn" id="gencode-btn">🔐 Gerar código de bloqueio</button>
+      <button class="btn" id="save-btn">💾 Salvar</button>
+      <button class="btn" id="export-btn">Exportar escala</button>
+      <button class="btn" id="import-btn">Importar escala</button>
+      <input type="file" id="file-import" accept="application/json">
+      <button class="btn danger" id="reset-btn" style="display:none;">⚠ Resetar escala do mês (admin)</button>
+      <button class="btn danger" id="logout-btn">Sair</button>
+    </div>
+  </div>
+
+  <div id="save-status" style="font-size:11.5px; color:#5f5f5f; margin:-8px 0 16px;"></div>
+
+  <!-- ============ PAINEL ADMIN ============ -->
+  <div id="admin-panel">
+    <h2>⚙ Painel do administrador</h2>
+    <p class="sub">Aqui você configura o calendário, os servidores, cotas, restrições e travamentos. Nenhuma alteração é salva na nuvem até clicar em "Salvar configurações".</p>
+
+    <div class="admin-section">
+      <h3>1. Mês e ano do calendário</h3>
+      <div class="admin-row">
+        <div class="fld">
+          <label>Mês</label>
+          <select id="admin-month"></select>
+        </div>
+        <div class="fld">
+          <label>Ano</label>
+          <input type="number" id="admin-year" min="2020" max="2100">
+        </div>
+        <div class="fld">
+          <button class="btn" id="admin-apply-month">Aplicar calendário</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h3>2. Servidores (nomes, cores, cotas e restrições)</h3>
+      <div id="server-list"></div>
+      <button class="btn" id="admin-add-server">+ Adicionar novo servidor</button>
+    </div>
+
+    <div class="admin-section">
+      <h3>3. Datas travadas no mês atual</h3>
+      <p class="sub" style="margin-bottom:8px;">Clique em qualquer bloco do calendário (logado como administrador) para atribuir, liberar ou travar/destravar aquela data. A lista abaixo mostra tudo que já está travado.</p>
+      <div id="locked-list"><span style="color:#555;font-size:12px;">Nenhuma data travada no momento.</span></div>
+    </div>
+
+    <div class="admin-actions">
+      <button class="btn admin" id="admin-save-config">💾 Salvar configurações</button>
+      <button class="btn" id="admin-close">Fechar painel</button>
+    </div>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="unlock-card" id="mycode-card" style="display:none;">
+    <b>🔐 Seu código de bloqueio:</b>
+    <span id="mycode-display" style="font-family:'Courier New',monospace; font-size:17px; letter-spacing:3px; color:var(--accent); font-weight:700;"></span>
+    <button class="btn danger" id="mycode-delete-btn">✕ Excluir código</button>
+    <div class="hint2">Este código protege todos os seus blocos de turno já alocados — outro servidor só consegue desalocá-los informando este código em "Destravar com código". Você pode excluí-lo quando quiser; isso remove a proteção de todos os seus blocos (a alocação em si não é apagada).</div>
+  </div>
+
+  <div class="unlock-card">
+    <b>🔓 Destravar com código:</b>
+    <input type="text" id="unlock-input" maxlength="5" placeholder="XXXXX">
+    <button class="btn" id="unlock-btn">Destravar</button>
+    <div class="hint2">Se um servidor gerou um código de bloqueio para proteger suas datas, insira o código aqui para destravá-las. O bloco permanece alocado; em seguida você escolhe manter a alocação atual ou assumi-la para você.</div>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div id="calendar"></div>
+
+  <footer class="note" id="footer-note"></footer>
+</div>
+
+<!-- ============ MODAL: escolher jornada ============ -->
+<div id="modal-bg">
+  <div id="modal-box">
+    <h3 id="modal-title">Escolher jornada</h3>
+    <p id="modal-sub"></p>
+    <div class="modal-btns">
+      <button id="modal-12h">12 horas</button>
+      <button id="modal-24h" class="primary">24 horas</button>
+    </div>
+    <div id="modal-note" style="color:#666;font-size:10.5px;margin-top:10px;"></div>
+    <button id="modal-cancel">cancelar</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: administrar célula ============ -->
+<div id="admin-modal-bg">
+  <div id="admin-modal-box">
+    <h3 id="admin-modal-title">Administrar bloco</h3>
+    <p id="admin-modal-sub"></p>
+    <div class="admin-field">
+      <label>Atribuir a:</label>
+      <select id="admin-modal-select"></select>
+    </div>
+    <div class="admin-check">
+      <input type="checkbox" id="admin-modal-lock">
+      <label for="admin-modal-lock">🔒 Travar esta data (impede qualquer alteração por servidores)</label>
+    </div>
+    <div class="modal-btns">
+      <button id="admin-modal-save" class="primary">Salvar</button>
+    </div>
+    <button id="admin-modal-cancel">cancelar</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: código gerado ============ -->
+<div id="code-modal-bg">
+  <div id="code-modal-box">
+    <h3>Código de bloqueio gerado</h3>
+    <p style="color:var(--graytext); font-size:12.5px;">Compartilhe este código apenas com quem deve poder destravar (desalocar) suas datas já atribuídas. Qualquer servidor de posse deste código pode liberá-las no campo "Destravar com código".</p>
+    <div class="code-display" id="code-display">XXXXX</div>
+    <p id="code-modal-count" style="color:#666; font-size:11px;"></p>
+    <button class="primary" id="code-modal-close" style="width:100%;">Entendi</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: blocos destravados (manter ou assumir) ============ -->
+<div id="unlock-modal-bg">
+  <div id="unlock-modal-box">
+    <h3>Blocos destravados</h3>
+    <p>O código foi validado e a proteção foi removida. Escolha, para cada bloco, se deseja manter a alocação atual ou assumi-la para você.</p>
+    <div id="unlock-modal-list"></div>
+    <button class="primary" id="unlock-modal-close" style="width:100%; margin-top:4px;">Concluir</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: alterar senha ============ -->
+<div id="pwd-modal-bg">
+  <div id="pwd-modal-box">
+    <h3>Alterar senha</h3>
+    <div class="admin-field">
+      <label>Senha atual</label>
+      <input type="password" id="pwd-current" autocomplete="off">
+    </div>
+    <div class="admin-field">
+      <label>Nova senha (mín. 4 caracteres — letras e/ou números)</label>
+      <input type="password" id="pwd-new" autocomplete="off">
+    </div>
+    <div class="admin-field">
+      <label>Confirmar nova senha</label>
+      <input type="password" id="pwd-confirm" autocomplete="off">
+    </div>
+    <div id="pwd-error" style="color:#ff5b5b; font-size:12px; margin-bottom:10px; min-height:14px; text-align:left;"></div>
+    <div class="modal-btns">
+      <button id="pwd-save" class="primary">Salvar</button>
+    </div>
+    <button id="pwd-cancel">cancelar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ================================================================
+   CONFIGURAÇÃO DO JSONBIN.IO (opcional — permite sincronizar entre
+   computadores). Preencha binId e apiKey abaixo caso queira usar.
+   Enquanto os valores não forem preenchidos, o app funciona apenas
+   localmente neste navegador.
+   ================================================================ */
+const JSONBIN_CONFIG = {
+  binId: "6a87bdc6da38895dfefdeee9",
+  apiKey: "$2a$10$esGOS1hy.M4NClUbfC7hU..eCp6lR9Mqkacx5FDcw9OgizjO9g0bK"
+};
+
+const CLOUD_CONFIGURED = JSONBIN_CONFIG.binId !== "COLE_AQUI" && JSONBIN_CONFIG.apiKey !== "COLE_AQUI"
+  && !!JSONBIN_CONFIG.binId && !!JSONBIN_CONFIG.apiKey;
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`;
+const JSONBIN_HEADERS = {
+  'Content-Type': 'application/json',
+  'X-Master-Key': JSONBIN_CONFIG.apiKey,
+  'X-Bin-Meta': 'false'
+};
+const STORAGE_KEY = 'escala_trabalho_v2';
+
+/* ---------------- DADOS PADRÃO ---------------- */
+const ESC_FERIAS = {id:'esc_ferias', name:'ESC_FÉRIAS', hex:'#707070'};
+const DOW_LABELS = ['S','T','Q','Q','S','S','D']; // Seg Ter Qua Qui Sex Sab Dom
+const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function defaultConfig(){
+  return {
+    year: 2026,
+    month: 8, // Setembro (0-based)
+    users: [
+      {id:'marcelo', name:'Marcelo', hex:'#00e0ff', isAdmin:true,
+        quotaMin:13, quotaStart:2, quotaEnd:30,
+        weekendRequired:4, weekendAllowed:[0,1,2,3], weekendMax:2, weekendLabel:'todos os fins de semana',
+        maxWeeklyBlocks:null, blockedDates:[]},
+      {id:'rodrigo', name:'Rodrigo', hex:'#f4f11a', isAdmin:false,
+        quotaMin:13, quotaStart:3, quotaEnd:30,
+        weekendRequired:4, weekendAllowed:[0,1,2,3], weekendMax:2, weekendLabel:'todos os fins de semana',
+        maxWeeklyBlocks:null, blockedDates:[]},
+      {id:'jaime', name:'Jaime', hex:'#eaf7e2', isAdmin:false,
+        quotaMin:6, quotaStart:18, quotaEnd:30,
+        weekendRequired:2, weekendAllowed:[2,3], weekendMax:null, weekendLabel:'3º e 4º fins de semana',
+        maxWeeklyBlocks:null, blockedDates:[]},
+      {id:'leandro', name:'Leandro', hex:'#ff2020', isAdmin:false,
+        quotaMin:13, quotaStart:1, quotaEnd:30,
+        weekendRequired:4, weekendAllowed:[0,1,2,3], weekendMax:2, weekendLabel:'todos os fins de semana',
+        maxWeeklyBlocks:null, blockedDates:[]},
+      {id:'erica', name:'Erica', hex:'#ff33e6', isAdmin:false,
+        quotaMin:7, quotaStart:1, quotaEnd:17,
+        weekendRequired:2, weekendAllowed:[0,1], weekendMax:null, weekendLabel:'1º e 2º fins de semana',
+        maxWeeklyBlocks:null, blockedDates:[]}
+    ]
+  };
+}
+
+let CONFIG = defaultConfig();
+let schedules = {}; // { 'YYYY-MM': { date: {D,N,lock:{D,N},code:{D,N}} } }
+let schedule = null; // aponta para schedules[monthKey()]
+
+let currentUser = null;
+let selectedLoginId = null;
+let pendingCell = null;      // {date, shift} aguardando escolha 12h/24h
+let pendingAdminCell = null; // {date, shift} aguardando ação do admin
+let adminPanelOpen = false;
+
+let cloudReady = false;
+let lastSavedAt = null;
+let pollTimer = null;
+let lastKnownJSON = null;
+
+/* ---------------- HELPERS DE MÊS/ANO ---------------- */
+function daysInMonth(){ return new Date(CONFIG.year, CONFIG.month+1, 0).getDate(); }
+function monthKey(){ return `${CONFIG.year}-${String(CONFIG.month+1).padStart(2,'0')}`; }
+
+function buildWeekends(){
+  const weekends = [];
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    const dow = new Date(CONFIG.year, CONFIG.month, d).getDay();
+    if(dow===6){
+      const pair = [d];
+      if(d+1<=dim) pair.push(d+1);
+      weekends.push(pair);
+    }
+  }
+  return weekends;
+}
+function weekendIndexOf(date){
+  const WEEKENDS = buildWeekends();
+  for(let i=0;i<WEEKENDS.length;i++){
+    if(WEEKENDS[i].includes(date)) return i;
+  }
+  return -1;
+}
+function mondayIndex(jsDow){ return (jsDow+6)%7; }
+function buildWeeks(){
+  const weeks = [];
+  let week = new Array(7).fill(null);
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    const jsDate = new Date(CONFIG.year, CONFIG.month, d);
+    const col = mondayIndex(jsDate.getDay());
+    week[col] = d;
+    if(col===6 || d===dim){
+      weeks.push(week);
+      week = new Array(7).fill(null);
+    }
+  }
+  return weeks;
+}
+function weekIndexOf(date){
+  const weeks = buildWeeks();
+  for(let i=0;i<weeks.length;i++){
+    if(weeks[i].includes(date)) return i;
+  }
+  return -1;
+}
+
+/* ---------------- ESCALA (schedule) ---------------- */
+function defaultSchedule(){
+  const s = {};
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){ s[d] = {D:null, N:null, lock:{D:false,N:false}, code:{D:null,N:null}}; }
+  // Segundas e sextas-feiras, turno diurno (07h-19h), reservadas para ESC_FÉRIAS.
+  for(let d=1; d<=dim; d++){
+    const jsDow = new Date(CONFIG.year, CONFIG.month, d).getDay();
+    if(jsDow===1 || jsDow===5){ s[d].D = ESC_FERIAS.id; }
+  }
+  return s;
+}
+function migrateSchedule(s){
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    if(!s[d]) s[d] = {D:null,N:null,lock:{D:false,N:false},code:{D:null,N:null}};
+    if(!s[d].lock) s[d].lock = {D:false,N:false};
+    if(!s[d].code) s[d].code = {D:null,N:null};
+  }
+  return s;
+}
+function loadCurrentMonthSchedule(){
+  const key = monthKey();
+  if(!schedules[key]){
+    schedules[key] = defaultSchedule();
+  } else {
+    schedules[key] = migrateSchedule(schedules[key]);
+  }
+  schedule = schedules[key];
+}
+
+/* ---------------- HELPERS DE USUÁRIO ---------------- */
+function userById(id){ return CONFIG.users.find(u=>u.id===id) || (id===ESC_FERIAS.id ? ESC_FERIAS : null); }
+function adminUser(){ return CONFIG.users.find(u=>u.isAdmin) || CONFIG.users[0]; }
+function slugify(name){
+  return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'servidor';
+}
+function uniqueId(base){
+  let id = base, n = 1;
+  while(CONFIG.users.some(u=>u.id===id)){ id = base+'_'+(++n); }
+  return id;
+}
+function randomHex(){
+  const letters = '89ABCDEF';
+  let c = '#';
+  for(let i=0;i<6;i++) c += letters[Math.floor(Math.random()*letters.length)];
+  return c;
+}
+
+function blockIndex(date, shift){ return (date-1)*2 + (shift==='D'?0:1); }
+
+// Senha padrão de cada servidor é o próprio nome, a menos que ele já tenha
+// definido uma senha própria (armazenada sempre em minúsculas).
+function getExpectedPassword(u){
+  return u.password ? u.password : u.name.toLowerCase();
+}
+
+function toast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = type||'';
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>{ t.style.display='none'; }, 3000);
+}
+
+/* ---------------- REGRAS DE NEGÓCIO ---------------- */
+function withinQuotaRange(userId, date){
+  const u = userById(userId);
+  if(!u || u.quotaStart==null || u.quotaEnd==null) return true;
+  return date >= u.quotaStart && date <= u.quotaEnd;
+}
+
+function countUserWeekendBlocks(userId, weekendIndices){
+  const WEEKENDS = buildWeekends();
+  let count = 0;
+  weekendIndices.forEach(wIdx=>{
+    (WEEKENDS[wIdx]||[]).forEach(d=>{
+      if(schedule[d].D===userId) count++;
+      if(schedule[d].N===userId) count++;
+    });
+  });
+  return count;
+}
+
+function checkWeekendCap(userId, newDates){
+  const u = userById(userId);
+  if(!u || !u.weekendMax) return {ok:true};
+  const perWeekend = {};
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    const wIdx = weekendIndexOf(d);
+    if(wIdx===-1) continue;
+    if(schedule[d].D===userId) perWeekend[wIdx]=(perWeekend[wIdx]||0)+1;
+    if(schedule[d].N===userId) perWeekend[wIdx]=(perWeekend[wIdx]||0)+1;
+  }
+  newDates.forEach(d=>{
+    const wIdx = weekendIndexOf(d);
+    if(wIdx===-1) return;
+    perWeekend[wIdx]=(perWeekend[wIdx]||0)+1;
+  });
+  for(const wIdx in perWeekend){
+    if(perWeekend[wIdx] > u.weekendMax){
+      return {ok:false, reason:`Máximo de ${u.weekendMax*12}h por final de semana (${u.weekendMax} blocos).`};
+    }
+  }
+  return {ok:true};
+}
+
+function isBlockedForUser(userId, date, shift){
+  const u = userById(userId);
+  if(!u || !u.blockedDates) return false;
+  return u.blockedDates.some(b => b.date===date && (b.shift==='ALL' || b.shift===shift));
+}
+
+function checkMaxWeekly(userId, newDates){
+  const u = userById(userId);
+  if(!u || !u.maxWeeklyBlocks) return {ok:true};
+  const weeks = buildWeeks();
+  const perWeek = {};
+  weeks.forEach((week, wi)=>{
+    week.forEach(d=>{
+      if(d===null) return;
+      if(schedule[d].D===userId) perWeek[wi]=(perWeek[wi]||0)+1;
+      if(schedule[d].N===userId) perWeek[wi]=(perWeek[wi]||0)+1;
+    });
+  });
+  const addCount = {};
+  newDates.forEach(d=>{
+    const wi = weekIndexOf(d);
+    if(wi===-1) return;
+    addCount[wi] = (addCount[wi]||0)+1;
+  });
+  for(const wi in addCount){
+    const total = (perWeek[wi]||0) + addCount[wi];
+    if(total > u.maxWeeklyBlocks){
+      return {ok:false, reason:`Limite semanal de ${u.maxWeeklyBlocks} blocos de 12h (${u.maxWeeklyBlocks*12}h) seria excedido.`};
+    }
+  }
+  return {ok:true};
+}
+
+function validateAssignment(userId, newBlocks){
+  const existing = [];
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    if(schedule[d].D===userId) existing.push(blockIndex(d,'D'));
+    if(schedule[d].N===userId) existing.push(blockIndex(d,'N'));
+  }
+  const all = Array.from(new Set([...existing, ...newBlocks])).sort((a,b)=>a-b);
+  let runs = [];
+  let run = [all[0]];
+  for(let i=1;i<all.length;i++){
+    if(all[i] === run[run.length-1]+1){
+      run.push(all[i]);
+    } else {
+      runs.push(run);
+      run = [all[i]];
+    }
+  }
+  runs.push(run);
+  for(const r of runs){
+    if(r.length > 2){
+      return {ok:false, reason:'A jornada não pode passar de 24 horas seguidas.'};
+    }
+  }
+  for(let i=1;i<runs.length;i++){
+    const prevEnd = runs[i-1][runs[i-1].length-1];
+    const start = runs[i][0];
+    if(start - prevEnd < 3){
+      return {ok:false, reason:'É necessário no mínimo 24 horas de descanso entre uma jornada e a próxima.'};
+    }
+  }
+  return {ok:true};
+}
+
+function get24hPair(date, shift){
+  if(shift==='D'){
+    return {date2:date, shift2:'N'};
+  } else {
+    const nextDate = date+1;
+    if(nextDate > daysInMonth()) return null;
+    return {date2:nextDate, shift2:'D'};
+  }
+}
+
+/* ---------------- PERSISTÊNCIA ---------------- */
+function saveAllToLocalCache(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({config:CONFIG, schedules, savedAt:new Date().toISOString()}));
+    return true;
+  }catch(e){ return false; }
+}
+function loadAllFromLocalCache(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(parsed && parsed.config && parsed.schedules) return parsed;
+    return null;
+  }catch(e){ return null; }
+}
+async function saveAllToCloud(){
+  saveAllToLocalCache();
+  if(!CLOUD_CONFIGURED) return false;
+  try{
+    const payload = {config:CONFIG, schedules, savedAt:new Date().toISOString()};
+    const res = await fetch(JSONBIN_URL, {method:'PUT', headers:JSONBIN_HEADERS, body:JSON.stringify(payload)});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    lastSavedAt = new Date(payload.savedAt);
+    lastKnownJSON = JSON.stringify({config:payload.config, schedules:payload.schedules});
+    cloudReady = true;
+    return true;
+  }catch(e){
+    console.error('Erro ao salvar no JSONBin:', e);
+    return false;
+  }
+}
+async function fetchAllFromCloud(){
+  if(!CLOUD_CONFIGURED) return null;
+  try{
+    const res = await fetch(JSONBIN_URL + '/latest', {headers:JSONBIN_HEADERS});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    cloudReady = true;
+    return data;
+  }catch(e){
+    console.error('Erro ao ler o JSONBin:', e);
+    cloudReady = false;
+    return null;
+  }
+}
+function persistSilently(){
+  saveAllToCloud().then(ok=>{
+    updateSaveStatus();
+    if(!ok){
+      toast(CLOUD_CONFIGURED
+        ? 'Alteração salva apenas neste navegador — sincronização com a nuvem falhou.'
+        : 'JSONBin não configurado: alteração salva apenas neste navegador.', 'error');
+    }
+  });
+}
+function startRealtimeSync(){
+  if(!CLOUD_CONFIGURED) return;
+  const poll = async ()=>{
+    const data = await fetchAllFromCloud();
+    if(data && data.config && data.schedules){
+      const asJSON = JSON.stringify({config:data.config, schedules:data.schedules});
+      if(asJSON !== lastKnownJSON){
+        lastKnownJSON = asJSON;
+        CONFIG = data.config;
+        schedules = data.schedules;
+        loadCurrentMonthSchedule();
+        lastSavedAt = data.savedAt ? new Date(data.savedAt) : new Date();
+        saveAllToLocalCache();
+        if(currentUser){ renderAll(); } else { renderLogin(); }
+      }
+    } else if(data === null && !cloudReady){
+      toast('Falha na sincronização com a nuvem. Verifique sua conexão e as credenciais do JSONBin.', 'error');
+    }
+    updateSaveStatus();
+  };
+  poll();
+  pollTimer = setInterval(poll, 6000);
+}
+
+(function initData(){
+  const cached = loadAllFromLocalCache();
+  if(cached){
+    CONFIG = cached.config;
+    schedules = cached.schedules;
+  }
+  loadCurrentMonthSchedule();
+  startRealtimeSync();
+})();
+
+/* ---------------- LOGIN ---------------- */
+function renderLogin(){
+  if(selectedLoginId && !CONFIG.users.some(u=>u.id===selectedLoginId)){
+    selectedLoginId = null;
+  }
+  document.getElementById('login-sub').textContent = `${MONTH_NAMES[CONFIG.month]} ${CONFIG.year} — acesso ao sistema`;
+  const pick = document.getElementById('user-pick');
+  pick.innerHTML = '';
+  CONFIG.users.forEach(u=>{
+    const div = document.createElement('div');
+    div.className = 'user-opt';
+    div.dataset.id = u.id;
+    div.innerHTML = `<div class="swatch" style="background:${u.hex}"></div><div>${u.name}${u.isAdmin ? ' <span style=\"color:var(--warn);font-size:11px;\">(admin)</span>' : ''}</div>`;
+    if(u.id === selectedLoginId) div.classList.add('selected');
+    div.addEventListener('click', ()=>{
+      document.querySelectorAll('.user-opt').forEach(o=>o.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedLoginId = u.id;
+      document.getElementById('login-error').textContent = '';
+    });
+    pick.appendChild(div);
+  });
+}
+
+document.getElementById('login-btn').addEventListener('click', ()=>{
+  const err = document.getElementById('login-error');
+  if(!selectedLoginId){ err.textContent = 'Selecione seu nome na lista.'; return; }
+  const pw = document.getElementById('pw').value.trim().toLowerCase();
+  const user = userById(selectedLoginId);
+  if(pw !== getExpectedPassword(user)){
+    err.textContent = 'Senha incorreta.';
+    return;
+  }
+  currentUser = user;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  initApp();
+});
+document.getElementById('pw').addEventListener('keydown', (e)=>{
+  if(e.key==='Enter') document.getElementById('login-btn').click();
+});
+
+/* ---------------- APP RENDER ---------------- */
+function initApp(){
+  document.getElementById('who-line').innerHTML =
+    `<span class="me-swatch" style="background:${currentUser.hex}"></span>Logado como <strong>${currentUser.name}</strong>${currentUser.isAdmin ? ' <span style="color:var(--warn);">(administrador)</span>' : ''}`;
+  document.getElementById('reset-btn').style.display = currentUser.isAdmin ? 'inline-block' : 'none';
+  document.getElementById('admin-toggle-btn').style.display = currentUser.isAdmin ? 'inline-block' : 'none';
+  adminPanelOpen = false;
+  document.getElementById('admin-panel').style.display = 'none';
+  renderAll();
+}
+
+function renderAll(){
+  document.getElementById('app-title').textContent = `Escala — ${MONTH_NAMES[CONFIG.month]} ${CONFIG.year}`;
+  document.getElementById('footer-note').innerHTML =
+    `Clique num bloco livre (cinza) para se escalar — 12h ou 24h. Ao clicar num turno noturno, a opção de 24h completa com o turno diurno do dia seguinte.
+    Clique num bloco seu para remover. É obrigatório 24h de descanso entre uma jornada e outra. O turno diurno (07h–19h) de todas as segundas e sextas-feiras já está reservado para ESC_FÉRIAS.
+    Cada servidor só pode se escalar dentro do seu período permitido e deve cumprir as cotas indicadas no cartão de resumo. Blocos com borda laranja estão travados pelo administrador.
+    As alterações são salvas automaticamente na nuvem (quando configurada) e aparecem em outros computadores.`;
+  updateSaveStatus();
+  renderLegend();
+  renderCalendar();
+  renderSummary();
+  renderMyCodeCard();
+  renderLogin(); // mantém a tela de login sempre sincronizada com a lista atual de servidores
+  if(currentUser && currentUser.isAdmin && adminPanelOpen){
+    renderAdminPanel();
+  }
+}
+
+function updateSaveStatus(){
+  const el = document.getElementById('save-status');
+  if(!CLOUD_CONFIGURED){
+    el.textContent = 'JSONBin não configurado — os dados ficam salvos apenas neste navegador.';
+  } else if(!cloudReady){
+    el.textContent = 'Conectando à nuvem...';
+  } else if(lastSavedAt){
+    el.textContent = `Última gravação na nuvem: ${lastSavedAt.toLocaleDateString('pt-BR')} às ${lastSavedAt.toLocaleTimeString('pt-BR')}`;
+  } else {
+    el.textContent = 'Nenhuma gravação encontrada ainda na nuvem.';
+  }
+}
+
+function renderLegend(){
+  const el = document.getElementById('legend');
+  el.innerHTML = '';
+  CONFIG.users.forEach(u=>{
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-sw" style="background:${u.hex}"></div>${u.name}`;
+    el.appendChild(item);
+  });
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `<div class="legend-sw" style="background:var(--gray)"></div>Livre`;
+  el.appendChild(item);
+  const fer = document.createElement('div');
+  fer.className = 'legend-item';
+  fer.innerHTML = `<div class="legend-sw" style="background:${ESC_FERIAS.hex}"></div>${ESC_FERIAS.name} (seg. e sex., turno diurno 07h–19h)`;
+  el.appendChild(fer);
+  const lk = document.createElement('div');
+  lk.className = 'legend-item';
+  lk.innerHTML = `<div class="legend-sw" style="background:var(--gray); box-shadow:inset 0 0 0 3px var(--warn);"></div>Travado pelo administrador`;
+  el.appendChild(lk);
+}
+
+function renderSummary(){
+  const el = document.getElementById('summary');
+  el.innerHTML = '';
+  CONFIG.users.forEach(u=>{
+    let count = 0;
+    const dim = daysInMonth();
+    for(let d=1; d<=dim; d++){
+      if(schedule[d].D===u.id) count++;
+      if(schedule[d].N===u.id) count++;
+    }
+    const pct = u.quotaMin ? Math.min(100, Math.round((count/u.quotaMin)*100)) : 0;
+    const done = u.quotaMin ? count >= u.quotaMin : true;
+
+    let weekendHtml = '';
+    if(u.weekendRequired){
+      const wCount = countUserWeekendBlocks(u.id, u.weekendAllowed||[]);
+      const wDone = wCount >= u.weekendRequired;
+      const capTxt = u.weekendMax ? ` · máx ${u.weekendMax*12}h/fds` : '';
+      weekendHtml = `<div class="quota ${wDone?'done':'pending'}">Fins de semana: <span class="prog">${wCount}/${u.weekendRequired}</span></div>
+        <div class="range">${u.weekendLabel||''}${capTxt}</div>`;
+    }
+    let maxWeeklyHtml = '';
+    if(u.maxWeeklyBlocks){
+      maxWeeklyHtml = `<div class="range">Máx. semanal: ${u.maxWeeklyBlocks} blocos (${u.maxWeeklyBlocks*12}h)</div>`;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'sum-card';
+    card.innerHTML = `<div class="name"><span style="display:flex;align-items:center;gap:7px;"><span class="legend-sw" style="width:12px;height:12px;background:${u.hex}"></span>${u.name}</span>${currentUser && currentUser.id===u.id ? `<button class="genbtn" data-genfor="${u.id}">gerar código</button>` : ''}</div>
+      <div class="hrs">${count*12}h</div>
+      <div class="quota ${done?'done':'pending'}">Blocos: <span class="prog">${count}/${u.quotaMin||0}</span></div>
+      <div class="qbar"><div class="qbar-fill ${u.quotaMin && count>u.quotaMin?'over':''}" style="width:${pct}%"></div></div>
+      <div class="range">Período: ${u.quotaStart||1} a ${u.quotaEnd||dim}</div>
+      ${weekendHtml}
+      ${maxWeeklyHtml}`;
+    el.appendChild(card);
+  });
+  el.querySelectorAll('[data-genfor]').forEach(btn=>{
+    btn.addEventListener('click', ()=> generateLockCodeForUser(btn.dataset.genfor));
+  });
+}
+
+function renderCalendar(){
+  const cal = document.getElementById('calendar');
+  cal.innerHTML = '';
+  const weeks = buildWeeks();
+
+  weeks.forEach((week, wi)=>{
+    const firstDate = week.find(d=>d!==null);
+    const lastDate = [...week].reverse().find(d=>d!==null);
+    const block = document.createElement('div');
+    block.className = 'week-block';
+
+    const title = document.createElement('div');
+    title.className = 'week-title';
+    title.textContent = `Semana ${wi+1}  ·  ${firstDate} a ${lastDate} de ${MONTH_NAMES[CONFIG.month].toLowerCase()}`;
+    block.appendChild(title);
+
+    const table = document.createElement('table');
+    table.className = 'week-table';
+
+    const thead = document.createElement('tr');
+    const cornerTh = document.createElement('th');
+    cornerTh.style.width='54px';
+    thead.appendChild(cornerTh);
+    week.forEach(d=>{
+      const th = document.createElement('th');
+      if(d===null){
+        th.innerHTML = `<span class="dow" style="color:#3a3a3a">–</span>`;
+      } else {
+        th.innerHTML = `<span class="dow">${DOW_LABELS[week.indexOf(d)]}</span><span class="dnum">${d}/${String(CONFIG.month+1).padStart(2,'0')}</span>`;
+      }
+      thead.appendChild(th);
+    });
+    table.appendChild(thead);
+
+    table.appendChild(buildRow(week, 'D', '07h–19h'));
+    table.appendChild(buildRow(week, 'N', '19h–07h'));
+
+    block.appendChild(table);
+    cal.appendChild(block);
+  });
+}
+
+function buildRow(week, shift, label){
+  const tr = document.createElement('tr');
+  const labelTd = document.createElement('td');
+  labelTd.className = 'turno-label';
+  labelTd.textContent = label;
+  tr.appendChild(labelTd);
+
+  week.forEach(d=>{
+    const td = document.createElement('td');
+    td.className = 'cell';
+    if(d===null){
+      td.classList.add('pad');
+    } else {
+      const cellData = schedule[d];
+      const assigned = cellData[shift];
+      const isLocked = cellData.lock[shift];
+      const hasCode = !!cellData.code[shift];
+      if(isLocked) td.classList.add('locked');
+
+      if(assigned === ESC_FERIAS.id){
+        td.classList.add('ferias');
+        td.textContent = 'FÉRIAS';
+        td.addEventListener('click', ()=> {
+          if(currentUser.isAdmin) openAdminCellModal(d, shift);
+          else toast('Bloco reservado para ESC_FÉRIAS (turno diurno de segundas e sextas-feiras).', 'error');
+        });
+      } else if(assigned){
+        const u = userById(assigned);
+        td.classList.add('filled');
+        if(currentUser.isAdmin) td.classList.add('admin-mode');
+        td.style.background = u ? u.hex : '#888';
+        td.style.color = '#111';
+        td.textContent = (isLocked?'🔒 ':'') + (hasCode?'🔑 ':'') + (u?u.name:'?');
+        td.addEventListener('click', ()=> onCellClick(d, shift));
+      } else {
+        td.classList.add('empty');
+        if(currentUser.isAdmin) td.classList.add('admin-mode');
+        td.style.background = 'var(--gray)';
+        if(isLocked) td.textContent = '🔒';
+        td.addEventListener('click', ()=> onCellClick(d, shift));
+      }
+    }
+    tr.appendChild(td);
+  });
+  return tr;
+}
+
+/* ---------------- INTERAÇÃO ---------------- */
+function onCellClick(date, shift){
+  const cellData = schedule[date];
+  const occupant = cellData[shift];
+
+  if(currentUser.isAdmin){
+    openAdminCellModal(date, shift);
+    return;
+  }
+
+  if(cellData.lock[shift]){
+    toast('Esta data está travada pelo administrador e não pode ser alterada.', 'error');
+    return;
+  }
+
+  if(occupant){
+    if(occupant === ESC_FERIAS.id){
+      toast('Bloco reservado para ESC_FÉRIAS.', 'error');
+      return;
+    }
+    if(occupant === currentUser.id){
+      // Bloco alocado para o próprio usuário logado: o código de bloqueio serve para
+      // impedir OUTROS servidores de mexer nele, mas nunca o dono. O dono sempre pode
+      // modificar/remover livremente, sem precisar informar o código de desbloqueio.
+      cellData[shift] = null;
+      cellData.code[shift] = null; // remove também a proteção por código deste bloco, que deixou de existir
+      renderAll();
+      persistSilently();
+      toast('Bloco removido da sua escala.', 'ok');
+    } else {
+      toast(`Ocupado por ${userById(occupant).name}.`, 'error');
+    }
+    return;
+  }
+
+  if(isBlockedForUser(currentUser.id, date, shift)){
+    toast('Você está impedido de se alocar neste bloco (restrição definida pelo administrador).', 'error');
+    return;
+  }
+
+  if(!withinQuotaRange(currentUser.id, date)){
+    const u = currentUser;
+    toast(`Você só pode se escalar entre os dias ${u.quotaStart} e ${u.quotaEnd}.`, 'error');
+    return;
+  }
+
+  pendingCell = {date, shift};
+  const dayLabel = `${date}/${String(CONFIG.month+1).padStart(2,'0')}`;
+  const shiftLabel = shift==='D' ? '07h–19h' : '19h–07h';
+
+  const pair = get24hPair(date, shift);
+  const pairLocked = pair && schedule[pair.date2].lock[pair.shift2];
+  const pairBlocked = pair && isBlockedForUser(currentUser.id, pair.date2, pair.shift2);
+  const pairOccupied = !pair || schedule[pair.date2][pair.shift2] !== null;
+  const pairOutOfQuota = pair && !withinQuotaRange(currentUser.id, pair.date2);
+  const disable24h = pairOccupied || pairOutOfQuota || pairLocked || pairBlocked;
+
+  document.getElementById('modal-sub').textContent =
+    `Dia ${dayLabel}, turno ${shiftLabel}. Escolha a duração da jornada.`;
+
+  const btn24 = document.getElementById('modal-24h');
+  btn24.disabled = disable24h;
+  btn24.style.opacity = disable24h ? 0.4 : 1;
+
+  const note = document.getElementById('modal-note');
+  if(shift==='N' && pair){
+    note.textContent = `24h = completa com o turno diurno (07h–19h) do dia ${pair.date2}.`;
+  } else if(shift==='D'){
+    note.textContent = `24h = completa com o turno noturno (19h–07h) do dia ${date}.`;
+  } else {
+    note.textContent = '';
+  }
+  if(pairOccupied) note.textContent += ' O bloco complementar já está ocupado.';
+  if(pairOutOfQuota) note.textContent += ' O bloco complementar fica fora do seu período permitido.';
+  if(pairLocked) note.textContent += ' O bloco complementar está travado pelo administrador.';
+  if(pairBlocked) note.textContent += ' O bloco complementar está pré-bloqueado para você.';
+
+  document.getElementById('modal-bg').style.display = 'flex';
+}
+
+function closeModal(){
+  document.getElementById('modal-bg').style.display = 'none';
+  pendingCell = null;
+}
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-bg').addEventListener('click', (e)=>{
+  if(e.target.id==='modal-bg') closeModal();
+});
+
+document.getElementById('modal-12h').addEventListener('click', ()=>{
+  if(!pendingCell) return;
+  const {date, shift} = pendingCell;
+  const idx = blockIndex(date, shift);
+  const check = validateAssignment(currentUser.id, [idx]);
+  if(!check.ok){ toast(check.reason, 'error'); closeModal(); return; }
+  const capCheck = checkWeekendCap(currentUser.id, [date]);
+  if(!capCheck.ok){ toast(capCheck.reason, 'error'); closeModal(); return; }
+  const weeklyCheck = checkMaxWeekly(currentUser.id, [date]);
+  if(!weeklyCheck.ok){ toast(weeklyCheck.reason, 'error'); closeModal(); return; }
+  schedule[date][shift] = currentUser.id;
+  closeModal();
+  renderAll();
+  persistSilently();
+  toast('Jornada de 12h escalada com sucesso.', 'ok');
+});
+
+document.getElementById('modal-24h').addEventListener('click', ()=>{
+  if(!pendingCell) return;
+  const {date, shift} = pendingCell;
+  const pair = get24hPair(date, shift);
+  if(!pair) return;
+  if(schedule[pair.date2][pair.shift2] !== null) return;
+  if(schedule[pair.date2].lock[pair.shift2]){ toast('O bloco complementar está travado pelo administrador.', 'error'); closeModal(); return; }
+  if(isBlockedForUser(currentUser.id, pair.date2, pair.shift2)){ toast('O bloco complementar está pré-bloqueado para você.', 'error'); closeModal(); return; }
+  if(!withinQuotaRange(currentUser.id, pair.date2)){
+    const u = currentUser;
+    toast(`O bloco complementar (dia ${pair.date2}) fica fora do seu período permitido (${u.quotaStart} a ${u.quotaEnd}).`, 'error');
+    closeModal();
+    return;
+  }
+  const idx1 = blockIndex(date, shift);
+  const idx2 = blockIndex(pair.date2, pair.shift2);
+  const check = validateAssignment(currentUser.id, [idx1, idx2]);
+  if(!check.ok){ toast(check.reason, 'error'); closeModal(); return; }
+  const capCheck = checkWeekendCap(currentUser.id, [date, pair.date2]);
+  if(!capCheck.ok){ toast(capCheck.reason, 'error'); closeModal(); return; }
+  const weeklyCheck = checkMaxWeekly(currentUser.id, [date, pair.date2]);
+  if(!weeklyCheck.ok){ toast(weeklyCheck.reason, 'error'); closeModal(); return; }
+  schedule[date][shift] = currentUser.id;
+  schedule[pair.date2][pair.shift2] = currentUser.id;
+  closeModal();
+  renderAll();
+  persistSilently();
+  toast('Jornada de 24h escalada com sucesso.', 'ok');
+});
+
+/* ---------------- MODAL ADMIN (atribuir/travar qualquer célula) ---------------- */
+function openAdminCellModal(date, shift){
+  pendingAdminCell = {date, shift};
+  const cellData = schedule[date];
+  const occupant = cellData[shift];
+  const dayLabel = `${date}/${String(CONFIG.month+1).padStart(2,'0')}`;
+  const shiftLabel = shift==='D' ? '07h–19h' : '19h–07h';
+
+  document.getElementById('admin-modal-sub').textContent = `Dia ${dayLabel}, turno ${shiftLabel}.` + (cellData.code[shift] ? ' (protegido por código de bloqueio)' : '');
+
+  const sel = document.getElementById('admin-modal-select');
+  sel.innerHTML = '';
+  const optFree = document.createElement('option');
+  optFree.value = ''; optFree.textContent = '— Livre —';
+  sel.appendChild(optFree);
+  const optFerias = document.createElement('option');
+  optFerias.value = ESC_FERIAS.id; optFerias.textContent = ESC_FERIAS.name;
+  sel.appendChild(optFerias);
+  CONFIG.users.forEach(u=>{
+    const opt = document.createElement('option');
+    opt.value = u.id; opt.textContent = u.name;
+    sel.appendChild(opt);
+  });
+  sel.value = occupant || '';
+
+  document.getElementById('admin-modal-lock').checked = !!cellData.lock[shift];
+  document.getElementById('admin-modal-bg').style.display = 'flex';
+}
+function closeAdminModal(){
+  document.getElementById('admin-modal-bg').style.display = 'none';
+  pendingAdminCell = null;
+}
+document.getElementById('admin-modal-cancel').addEventListener('click', closeAdminModal);
+document.getElementById('admin-modal-bg').addEventListener('click', (e)=>{
+  if(e.target.id==='admin-modal-bg') closeAdminModal();
+});
+document.getElementById('admin-modal-save').addEventListener('click', ()=>{
+  if(!pendingAdminCell) return;
+  const {date, shift} = pendingAdminCell;
+  const sel = document.getElementById('admin-modal-select').value;
+  const lockChecked = document.getElementById('admin-modal-lock').checked;
+  const cellData = schedule[date];
+  const previousOccupant = cellData[shift];
+  cellData[shift] = sel || null;
+  cellData.lock[shift] = lockChecked;
+  if(sel !== previousOccupant){
+    cellData.code[shift] = null; // reatribuição pelo admin remove proteção por código antiga
+  }
+  closeAdminModal();
+  renderAll();
+  persistSilently();
+  toast('Bloco atualizado pelo administrador.', 'ok');
+});
+
+/* ---------------- GERAÇÃO DE CÓDIGO DE BLOQUEIO ---------------- */
+function generateCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for(let i=0;i<5;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+// Cada usuário tem UM único código ativo por vez (u.lockCode). Esse mesmo código
+// trava e destrava TODOS os blocos de turno já alocados a ele — não um código
+// diferente por bloco. Gerar novamente reaproveita o código existente (se houver)
+// e apenas estende a proteção a blocos que ainda não estavam protegidos.
+function generateLockCodeForUser(userId){
+  const u = userById(userId);
+  if(!u) return;
+  const dim = daysInMonth();
+  const targets = [];
+  for(let d=1; d<=dim; d++){
+    ['D','N'].forEach(shift=>{
+      if(schedule[d][shift]===userId){
+        targets.push({d, shift});
+      }
+    });
+  }
+  if(targets.length===0){
+    toast('Não há blocos alocados para gerar código.', 'error');
+    return;
+  }
+  const code = u.lockCode || generateCode();
+  u.lockCode = code;
+  targets.forEach(t=>{ schedule[t.d].code[t.shift] = code; });
+  renderAll();
+  persistSilently();
+  document.getElementById('code-display').textContent = code;
+  document.getElementById('code-modal-count').textContent = `${targets.length} bloco(s) de 12h protegido(s) com este código.`;
+  document.getElementById('code-modal-bg').style.display = 'flex';
+}
+document.getElementById('gencode-btn').addEventListener('click', ()=> generateLockCodeForUser(currentUser.id));
+document.getElementById('code-modal-close').addEventListener('click', ()=>{
+  document.getElementById('code-modal-bg').style.display = 'none';
+});
+
+// Exclusão do código pelo próprio dono: remove a proteção de TODOS os blocos que
+// estavam protegidos por ele. A alocação em si permanece; apenas deixa de exigir
+// código para outros servidores desalocarem.
+function clearUserLockCode(userId){
+  const u = userById(userId);
+  if(!u || !u.lockCode) return;
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    ['D','N'].forEach(shift=>{
+      if(schedule[d].code[shift] === u.lockCode){
+        schedule[d].code[shift] = null;
+      }
+    });
+  }
+  u.lockCode = null;
+  renderAll();
+  persistSilently();
+  toast('Código de bloqueio excluído. Seus blocos deixaram de estar protegidos por código.', 'ok');
+}
+document.getElementById('mycode-delete-btn').addEventListener('click', ()=>{
+  if(!currentUser) return;
+  const sure = window.confirm('Excluir seu código de bloqueio? Isso remove a proteção de todos os seus blocos de turno (as datas continuam alocadas a você).');
+  if(!sure) return;
+  clearUserLockCode(currentUser.id);
+});
+
+function renderMyCodeCard(){
+  const card = document.getElementById('mycode-card');
+  if(!card) return;
+  if(currentUser && currentUser.lockCode){
+    card.style.display = 'flex';
+    document.getElementById('mycode-display').textContent = currentUser.lockCode;
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+/* ---------------- DESTRAVAR COM CÓDIGO ---------------- */
+// Inserir o código apenas REMOVE A PROTEÇÃO (destrava) do(s) bloco(s).
+// A alocação atual é mantida por padrão; quem destravou escolhe, bloco a
+// bloco, se quer manter o servidor já alocado ou assumir a data para si.
+document.getElementById('unlock-btn').addEventListener('click', ()=>{
+  const input = document.getElementById('unlock-input');
+  const code = input.value.trim().toUpperCase();
+  if(!code){ toast('Informe um código.', 'error'); return; }
+  const matches = [];
+  const dim = daysInMonth();
+  for(let d=1; d<=dim; d++){
+    ['D','N'].forEach(shift=>{
+      if(schedule[d].code[shift] === code){
+        matches.push({date:d, shift});
+      }
+    });
+  }
+  if(matches.length===0){
+    toast('Código inválido ou já utilizado.', 'error');
+    return;
+  }
+  matches.forEach(m=>{ schedule[m.date].code[m.shift] = null; });
+  // Se o código destravado era o código ativo de algum servidor e nenhum bloco
+  // dele continua protegido, limpa o campo para manter o painel "Seu código" coerente.
+  CONFIG.users.forEach(u=>{
+    if(u.lockCode !== code) return;
+    const dim2 = daysInMonth();
+    let stillUsed = false;
+    for(let d=1; d<=dim2 && !stillUsed; d++){
+      if(schedule[d].code.D===code || schedule[d].code.N===code) stillUsed = true;
+    }
+    if(!stillUsed) u.lockCode = null;
+  });
+  input.value = '';
+  renderAll();
+  persistSilently();
+  toast(`${matches.length} bloco(s) destravado(s). A alocação foi mantida — escolha o que fazer com cada um.`, 'ok');
+  openUnlockChoiceModal(matches);
+});
+
+function openUnlockChoiceModal(matches){
+  const listEl = document.getElementById('unlock-modal-list');
+  listEl.innerHTML = '';
+  matches.forEach(m=>{
+    const occ = schedule[m.date][m.shift];
+    const occUser = userById(occ);
+    const dayLabel = `${m.date}/${String(CONFIG.month+1).padStart(2,'0')}`;
+    const shiftLabel = m.shift==='D' ? '07h–19h' : '19h–07h';
+    const isMine = occ === currentUser.id;
+    const row = document.createElement('div');
+    row.className = 'unlock-row';
+    row.innerHTML = `
+      <div class="info">Dia ${dayLabel} · ${shiftLabel} · atualmente com <strong>${occUser?occUser.name:'?'}</strong>${isMine?' (você)':''}</div>
+      <div class="row-btns">
+        <button data-keep="${m.date}|${m.shift}">Manter alocação</button>
+        ${isMine ? '' : `<button data-take="${m.date}|${m.shift}" class="primary">Assumir para mim</button>`}
+      </div>
+    `;
+    listEl.appendChild(row);
+  });
+  listEl.querySelectorAll('[data-keep]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const row = btn.closest('.unlock-row');
+      row.innerHTML = '<div class="resolved">Alocação mantida.</div>';
+    });
+  });
+  listEl.querySelectorAll('[data-take]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const [d, shift] = btn.dataset.take.split('|');
+      takeOverBlock(Number(d), shift, btn.closest('.unlock-row'));
+    });
+  });
+  document.getElementById('unlock-modal-bg').style.display = 'flex';
+}
+
+function takeOverBlock(date, shift, rowEl){
+  if(schedule[date].lock[shift]){
+    toast('Este bloco está travado pelo administrador.', 'error');
+    return;
+  }
+  if(isBlockedForUser(currentUser.id, date, shift)){
+    toast('Você está impedido de se alocar neste bloco (restrição definida pelo administrador).', 'error');
+    return;
+  }
+  if(!withinQuotaRange(currentUser.id, date)){
+    toast(`Fora do seu período permitido (${currentUser.quotaStart} a ${currentUser.quotaEnd}).`, 'error');
+    return;
+  }
+  const idx = blockIndex(date, shift);
+  const previous = schedule[date][shift];
+  schedule[date][shift] = null; // remove temporariamente para validar a troca
+  const check = validateAssignment(currentUser.id, [idx]);
+  if(!check.ok){
+    schedule[date][shift] = previous;
+    toast(check.reason, 'error');
+    return;
+  }
+  const capCheck = checkWeekendCap(currentUser.id, [date]);
+  if(!capCheck.ok){
+    schedule[date][shift] = previous;
+    toast(capCheck.reason, 'error');
+    return;
+  }
+  const weeklyCheck = checkMaxWeekly(currentUser.id, [date]);
+  if(!weeklyCheck.ok){
+    schedule[date][shift] = previous;
+    toast(weeklyCheck.reason, 'error');
+    return;
+  }
+  schedule[date][shift] = currentUser.id;
+  renderAll();
+  persistSilently();
+  if(rowEl) rowEl.innerHTML = '<div class="resolved" style="color:var(--accent);">Bloco assumido por você.</div>';
+  toast('Bloco assumido com sucesso.', 'ok');
+}
+
+document.getElementById('unlock-modal-close').addEventListener('click', ()=>{
+  document.getElementById('unlock-modal-bg').style.display = 'none';
+});
+document.getElementById('unlock-modal-bg').addEventListener('click', (e)=>{
+  if(e.target.id==='unlock-modal-bg') document.getElementById('unlock-modal-bg').style.display = 'none';
+});
+
+/* ---------------- ALTERAR SENHA ---------------- */
+document.getElementById('change-pwd-btn').addEventListener('click', ()=>{
+  document.getElementById('pwd-current').value = '';
+  document.getElementById('pwd-new').value = '';
+  document.getElementById('pwd-confirm').value = '';
+  document.getElementById('pwd-error').textContent = '';
+  document.getElementById('pwd-modal-bg').style.display = 'flex';
+});
+document.getElementById('pwd-cancel').addEventListener('click', ()=>{
+  document.getElementById('pwd-modal-bg').style.display = 'none';
+});
+document.getElementById('pwd-modal-bg').addEventListener('click', (e)=>{
+  if(e.target.id==='pwd-modal-bg') document.getElementById('pwd-modal-bg').style.display = 'none';
+});
+document.getElementById('pwd-save').addEventListener('click', ()=>{
+  const err = document.getElementById('pwd-error');
+  const cur = document.getElementById('pwd-current').value;
+  const nw = document.getElementById('pwd-new').value;
+  const cf = document.getElementById('pwd-confirm').value;
+
+  if(cur.trim().toLowerCase() !== getExpectedPassword(currentUser)){
+    err.textContent = 'Senha atual incorreta.';
+    return;
+  }
+  if(!/^[a-zA-Z0-9]{4,}$/.test(nw)){
+    err.textContent = 'A nova senha deve ter no mínimo 4 caracteres (letras e/ou números, sem espaços ou símbolos).';
+    return;
+  }
+  if(nw.toLowerCase() !== cf.trim().toLowerCase()){
+    err.textContent = 'A confirmação não confere com a nova senha.';
+    return;
+  }
+  currentUser.password = nw.toLowerCase();
+  document.getElementById('pwd-modal-bg').style.display = 'none';
+  persistSilently();
+  toast('Senha alterada com sucesso.', 'ok');
+});
+
+/* ---------------- PAINEL ADMINISTRATIVO ---------------- */
+document.getElementById('admin-toggle-btn').addEventListener('click', ()=>{
+  adminPanelOpen = !adminPanelOpen;
+  document.getElementById('admin-panel').style.display = adminPanelOpen ? 'block' : 'none';
+  if(adminPanelOpen) renderAdminPanel();
+});
+document.getElementById('admin-close').addEventListener('click', ()=>{
+  adminPanelOpen = false;
+  document.getElementById('admin-panel').style.display = 'none';
+});
+
+function renderAdminPanel(){
+  // mês / ano
+  const monthSel = document.getElementById('admin-month');
+  monthSel.innerHTML = '';
+  MONTH_NAMES.forEach((m,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = m;
+    if(i===CONFIG.month) opt.selected = true;
+    monthSel.appendChild(opt);
+  });
+  document.getElementById('admin-year').value = CONFIG.year;
+
+  // lista de servidores
+  const list = document.getElementById('server-list');
+  list.innerHTML = '';
+  const dim = daysInMonth();
+  CONFIG.users.forEach(u=>{
+    const card = document.createElement('div');
+    card.className = 'server-card';
+    const blockedChips = (u.blockedDates||[]).map((b,i)=>
+      `<span class="blocked-chip">Dia ${b.date} · ${b.shift==='ALL'?'ambos turnos':(b.shift==='D'?'diurno':'noturno')}<button data-rmblock="${u.id}|${i}">✕</button></span>`
+    ).join('');
+    const weekendBoxes = [0,1,2,3].map(i=>{
+      const checked = (u.weekendAllowed||[]).includes(i) ? 'checked' : '';
+      return `<label><input type="checkbox" data-wk="${u.id}|${i}" ${checked}> ${i+1}º fds</label>`;
+    }).join('');
+    card.innerHTML = `
+      <div class="server-head">
+        <div class="swatch" style="background:${u.hex}"></div>
+        <div class="fld" style="flex:1;">
+          <label>Nome</label>
+          <input type="text" data-field="${u.id}|name" value="${u.name}">
+        </div>
+        <div class="fld">
+          <label>Cor</label>
+          <input type="color" data-field="${u.id}|hex" value="${u.hex}">
+        </div>
+        <div class="fld">
+          <label>Admin</label>
+          <input type="checkbox" data-field="${u.id}|isAdmin" ${u.isAdmin?'checked':''}>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div class="fld">
+          <label>Carga horária mín. (blocos de 12h)</label>
+          <input type="number" min="0" data-field="${u.id}|quotaMin" value="${u.quotaMin||0}">
+        </div>
+        <div class="fld">
+          <label>Período permitido — dia início</label>
+          <input type="number" min="1" max="${dim}" data-field="${u.id}|quotaStart" value="${u.quotaStart||1}">
+        </div>
+        <div class="fld">
+          <label>Período permitido — dia fim</label>
+          <input type="number" min="1" max="${dim}" data-field="${u.id}|quotaEnd" value="${u.quotaEnd||dim}">
+        </div>
+      </div>
+      <div class="admin-row">
+        <div class="fld">
+          <label>Blocos obrigatórios em fim de semana</label>
+          <input type="number" min="0" data-field="${u.id}|weekendRequired" value="${u.weekendRequired||0}">
+        </div>
+        <div class="fld">
+          <label>Máx. blocos por fim de semana (vazio = sem limite)</label>
+          <input type="number" min="0" data-field="${u.id}|weekendMax" value="${u.weekendMax||''}">
+        </div>
+        <div class="fld" style="flex:1;">
+          <label>Fins de semana permitidos</label>
+          <div class="weekend-chk">${weekendBoxes}</div>
+        </div>
+      </div>
+      <div class="admin-row">
+        <div class="fld">
+          <label>Máx. blocos de 12h por semana (vazio = sem limite)</label>
+          <input type="number" min="0" data-field="${u.id}|maxWeeklyBlocks" value="${u.maxWeeklyBlocks||''}">
+        </div>
+      </div>
+      <div class="admin-row" style="margin-top:10px;">
+        <div class="fld">
+          <label>Pré-bloquear dia</label>
+          <input type="number" min="1" max="${dim}" id="blockday-${u.id}" placeholder="dia">
+        </div>
+        <div class="fld">
+          <label>Turno bloqueado</label>
+          <select id="blockshift-${u.id}">
+            <option value="ALL">Ambos</option>
+            <option value="D">Diurno (07h–19h)</option>
+            <option value="N">Noturno (19h–07h)</option>
+          </select>
+        </div>
+        <div class="fld">
+          <button class="btn" data-addblock="${u.id}">+ Adicionar restrição</button>
+        </div>
+      </div>
+      <div class="blocked-list">${blockedChips || '<span style="color:#555;font-size:11px;">Nenhuma restrição cadastrada.</span>'}</div>
+      <div style="margin-top:12px;">
+        <button class="btn danger" data-rmserver="${u.id}">Remover servidor</button>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  // eventos: campos simples
+  list.querySelectorAll('[data-field]').forEach(inp=>{
+    const [uid, field] = inp.dataset.field.split('|');
+    inp.addEventListener('change', ()=>{
+      const u = userById(uid);
+      if(!u) return;
+      if(inp.type==='checkbox'){
+        if(field==='isAdmin'){
+          if(inp.checked){
+            CONFIG.users.forEach(x=>x.isAdmin=false);
+            u.isAdmin = true;
+          } else {
+            u.isAdmin = false;
+          }
+        }
+      } else if(inp.type==='number'){
+        const val = inp.value === '' ? null : Number(inp.value);
+        u[field] = val;
+      } else {
+        u[field] = inp.value;
+      }
+    });
+  });
+
+  // fins de semana permitidos
+  list.querySelectorAll('[data-wk]').forEach(chk=>{
+    const [uid, idx] = chk.dataset.wk.split('|');
+    chk.addEventListener('change', ()=>{
+      const u = userById(uid);
+      if(!u) return;
+      if(!u.weekendAllowed) u.weekendAllowed = [];
+      const i = Number(idx);
+      if(chk.checked){
+        if(!u.weekendAllowed.includes(i)) u.weekendAllowed.push(i);
+      } else {
+        u.weekendAllowed = u.weekendAllowed.filter(x=>x!==i);
+      }
+    });
+  });
+
+  // adicionar restrição
+  list.querySelectorAll('[data-addblock]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const uid = btn.dataset.addblock;
+      const u = userById(uid);
+      const dayInput = document.getElementById(`blockday-${uid}`);
+      const shiftInput = document.getElementById(`blockshift-${uid}`);
+      const day = Number(dayInput.value);
+      if(!day || day<1 || day>dim){ toast('Informe um dia válido do mês.', 'error'); return; }
+      if(!u.blockedDates) u.blockedDates = [];
+      u.blockedDates.push({date:day, shift:shiftInput.value});
+      renderAdminPanel();
+    });
+  });
+
+  // remover restrição
+  list.querySelectorAll('[data-rmblock]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const [uid, idx] = btn.dataset.rmblock.split('|');
+      const u = userById(uid);
+      u.blockedDates.splice(Number(idx),1);
+      renderAdminPanel();
+    });
+  });
+
+  // remover servidor
+  list.querySelectorAll('[data-rmserver]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const uid = btn.dataset.rmserver;
+      if(CONFIG.users.length<=1){ toast('É necessário manter ao menos um servidor.', 'error'); return; }
+      const u = userById(uid);
+      const sure = window.confirm(`Remover o servidor "${u.name}"? As datas já atribuídas a ele ficarão marcadas para um servidor inexistente até nova atribuição.`);
+      if(!sure) return;
+      CONFIG.users = CONFIG.users.filter(x=>x.id!==uid);
+      if(!CONFIG.users.some(x=>x.isAdmin) && CONFIG.users.length) CONFIG.users[0].isAdmin = true;
+      renderAdminPanel();
+    });
+  });
+
+  renderLockedList();
+}
+
+document.getElementById('admin-apply-month').addEventListener('click', ()=>{
+  const m = Number(document.getElementById('admin-month').value);
+  const y = Number(document.getElementById('admin-year').value);
+  if(!y || y<2020 || y>2100){ toast('Informe um ano válido.', 'error'); return; }
+  CONFIG.month = m;
+  CONFIG.year = y;
+  loadCurrentMonthSchedule();
+  renderAll();
+  toast(`Calendário de ${MONTH_NAMES[m]} de ${y} carregado.`, 'ok');
+});
+
+document.getElementById('admin-add-server').addEventListener('click', ()=>{
+  const name = window.prompt('Nome do novo servidor:');
+  if(!name || !name.trim()) return;
+  const id = uniqueId(slugify(name.trim()));
+  CONFIG.users.push({
+    id, name:name.trim(), hex:randomHex(), isAdmin:false,
+    quotaMin:0, quotaStart:1, quotaEnd:daysInMonth(),
+    weekendRequired:0, weekendAllowed:[], weekendMax:null, weekendLabel:'',
+    maxWeeklyBlocks:null, blockedDates:[], lockCode:null
+  });
+  renderAdminPanel();
+  toast('Servidor adicionado. Ajuste os dados e clique em "Salvar configurações".', 'ok');
+});
+
+function renderLockedList(){
+  const el = document.getElementById('locked-list');
+  el.innerHTML = '';
+  const dim = daysInMonth();
+  let any = false;
+  for(let d=1; d<=dim; d++){
+    ['D','N'].forEach(shift=>{
+      if(schedule[d].lock[shift]){
+        any = true;
+        const occ = schedule[d][shift];
+        const occName = occ ? (userById(occ)?userById(occ).name:occ) : 'livre';
+        const row = document.createElement('div');
+        row.className = 'locked-list-item';
+        row.innerHTML = `<span>Dia ${d} · ${shift==='D'?'07h–19h':'19h–07h'} · ${occName}</span><button data-unlockday="${d}|${shift}">Destravar</button>`;
+        el.appendChild(row);
+      }
+    });
+  }
+  if(!any){
+    el.innerHTML = '<span style="color:#555;font-size:12px;">Nenhuma data travada no momento.</span>';
+  } else {
+    el.querySelectorAll('[data-unlockday]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const [d, shift] = btn.dataset.unlockday.split('|');
+        schedule[Number(d)].lock[shift] = false;
+        renderAll();
+        persistSilently();
+        toast('Data destravada.', 'ok');
+      });
+    });
+  }
+}
+
+document.getElementById('admin-save-config').addEventListener('click', async ()=>{
+  const ok = await saveAllToCloud();
+  updateSaveStatus();
+  renderAll();
+  toast(ok ? 'Configurações salvas na nuvem.' : (CLOUD_CONFIGURED ? 'Falha ao salvar na nuvem — dados salvos apenas neste navegador.' : 'JSONBin não configurado — configurações salvas apenas neste navegador.'), ok?'ok':'error');
+});
+
+/* ---------------- EXPORT / IMPORT ---------------- */
+document.getElementById('export-btn').addEventListener('click', ()=>{
+  const data = JSON.stringify({config:CONFIG, schedules}, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `escala-${monthKey()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Escala exportada.', 'ok');
+});
+document.getElementById('import-btn').addEventListener('click', ()=>{
+  document.getElementById('file-import').click();
+});
+document.getElementById('file-import').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    try{
+      const parsed = JSON.parse(evt.target.result);
+      if(parsed.config && parsed.schedules){
+        CONFIG = parsed.config;
+        schedules = parsed.schedules;
+        loadCurrentMonthSchedule();
+        renderAll();
+        persistSilently();
+        toast('Escala importada com sucesso.', 'ok');
+      } else {
+        toast('Arquivo inválido.', 'error');
+      }
+    }catch(err){
+      toast('Não foi possível ler o arquivo.', 'error');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ---------------- SALVAR / RESETAR (admin) ---------------- */
+document.getElementById('save-btn').addEventListener('click', async ()=>{
+  const ok = await saveAllToCloud();
+  updateSaveStatus();
+  if(ok){
+    toast('Escala salva na nuvem — visível para todos os computadores.', 'ok');
+  } else if(CLOUD_CONFIGURED){
+    toast('Não foi possível salvar na nuvem agora. Os dados ficaram salvos apenas neste navegador — tente novamente ou use "Exportar escala".', 'error');
+  } else {
+    toast('JSONBin não configurado: salvando apenas neste navegador.', 'error');
+  }
+});
+
+document.getElementById('reset-btn').addEventListener('click', async ()=>{
+  if(!currentUser || !currentUser.isAdmin) return;
+  const sure = window.confirm(`Tem certeza que deseja resetar TODA a escala de ${MONTH_NAMES[CONFIG.month]}/${CONFIG.year}? Esta ação apaga as atribuições deste mês e não pode ser desfeita.`);
+  if(!sure) return;
+  schedules[monthKey()] = defaultSchedule();
+  schedule = schedules[monthKey()];
+  const ok = await saveAllToCloud();
+  updateSaveStatus();
+  renderAll();
+  toast(ok ? 'Escala resetada por administrador.' : 'Escala resetada, mas falhou ao salvar na nuvem.', ok ? 'ok' : 'error');
+});
+
+/* ---------------- LOGOUT ---------------- */
+document.getElementById('logout-btn').addEventListener('click', async ()=>{
+  const ok = await saveAllToCloud();
+  toast(ok ? 'Alterações salvas na nuvem antes de sair.' : (CLOUD_CONFIGURED ? 'Aviso: falha ao salvar na nuvem ao sair.' : 'Aviso: JSONBin não configurado — dados salvos apenas neste navegador.'), ok?'ok':'error');
+  currentUser = null;
+  selectedLoginId = null;
+  adminPanelOpen = false;
+  document.getElementById('pw').value = '';
+  document.querySelectorAll('.user-opt').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+});
+
+renderLogin();
+</script>
+</body>
+</html>
